@@ -53,4 +53,18 @@ What this can't stop:
 | `/ratings status` | Storage and network info |
 
 ## Install
-From the repo root: `install.cmd`, or `.\install.ps1 -Addon ForeverRatings`.
+1. Open the [Releases page](https://github.com/PhantomNoodle/ForeverRatings/releases/latest) and download `ForeverRatings-<version>.zip` (under **Assets**).
+2. Close the game, or at least log out to the character screen.
+3. Extract the zip into your Forever addons folder, usually:
+   ```
+   C:\Program Files (x86)\World of Warcraft\_forever_\Interface\AddOns
+   ```
+   You should end up with `AddOns\ForeverRatings\ForeverRatings.toc`. If you get `AddOns\ForeverRatings\ForeverRatings\...` instead, move the inner folder up one level.
+4. Start the game. On the character screen, open **AddOns** and make sure **Forever Ratings** is ticked. If it says "out of date", tick **Load out of date AddOns**.
+
+To update, download the new zip and extract it over the old folder (replace the files when asked). Your ratings are kept, they live in `WTF\`, not in the addon folder.
+
+To uninstall, delete the `AddOns\ForeverRatings` folder.
+
+### Releases
+A new release with the packaged zip is built automatically when the `## Version:` line in `ForeverRatings.toc` changes on `main`. It can also be run by hand from the **Actions** tab (**Release**, then **Run workflow**). If a release for that version already exists, nothing happens.

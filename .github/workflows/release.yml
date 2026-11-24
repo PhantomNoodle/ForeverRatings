@@ -1,0 +1,58 @@
+name: Release
+
+# Builds ForeverRatings-<version>.zip and publishes it as a GitHub release.
+# Runs when the Version in ForeverRatings.toc changes on main (or by hand from the Actions tab).
+# If a release for that version already exists, nothing happens.
+
+on:
+  push:
+    branches: [main]
+    paths: [ForeverRatings.toc]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Read version
+        id: version
+        run: |
+          version=$(grep -m1 '^## Version:' ForeverRatings.toc | sed 's/^## Version:[[:space:]]*//' | tr -d '\r[:space:]')
+          if [ -z "$version" ]; then echo "No Version in ForeverRatings.toc"; exit 1; fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "tag=v$version" >> "$GITHUB_OUTPUT"
+
+      - name: Check for existing release
+        id: exists
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view "${{ steps.version.outputs.tag }}" >/dev/null 2>&1; then
+            echo "Release ${{ steps.version.outputs.tag }} already exists, skipping."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Package addon
+        if: steps.exists.outputs.skip != 'true'
+        run: |
+          mkdir -p build/ForeverRatings
+          cp ForeverRatings.toc *.lua README.md build/ForeverRatings/
+          [ -f LICENSE ] && cp LICENSE build/ForeverRatings/
+          cd build
+          zip -r "ForeverRatings-${{ steps.version.outputs.version }}.zip" ForeverRatings
+
+      - name: Publish release
+        if: steps.exists.outputs.skip != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${{ steps.version.outputs.tag }}" \
+            "build/ForeverRatings-${{ steps.version.outputs.version }}.zip" \
+            --target "${{ github.sha }}" \
+            --title "Forever Ratings ${{ steps.version.outputs.version }}" \
+            --generate-notes
