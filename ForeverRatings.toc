@@ -1,0 +1,12 @@
+## Interface: 16001, 120105
+## Title: Forever Ratings
+## Notes: Rate your groupmates after a dungeon. Ratings are shared between everyone running the addon, and only count when they come straight from the person who wrote them.
+## Version: 2.6.0
+## SavedVariables: ForeverRatingsDB
+## IconTexture: Interface\Icons\Achievement_Reputation_01
+## AddonCompartmentFunc: ForeverRatings_OnAddonCompartmentClick
+
+Core.lua
+Net.lua
+Group.lua
+UI.lua
